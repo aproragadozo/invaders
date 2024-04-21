@@ -27,7 +27,8 @@ enemyImg = pygame.image.load("enemy.png")
 # enemyImg = pygame.transform.scale(enemyImg, (64, 64))
 enemyX = random.randint(0, 800)
 enemyY = random.randint(50, 150)
-enemyX_change = 0
+enemyX_change = 0.08
+enemyY_change = 40
 
 def enemy(x, y):
     screen.blit(enemyImg, (x, y))
@@ -51,12 +52,23 @@ while running:
         if event.type == pygame.KEYUP:
             playerX_change = 0
 
+   
     playerX += playerX_change
     # horizontal boundaries
     if playerX<=0:
         playerX = 0
     elif playerX >= 736:
         playerX = 736
+
+    # enemy moving down when they hit the wall
+    enemyX += enemyX_change
+
+    if enemyX<=0:
+        enemyX_change = 0.08
+        enemyY += enemyY_change
+    elif enemyX >= 736:
+        enemyX_change = -0.08
+        enemyY += enemyY_change
     
     player(playerX, playerY)
     enemy(enemyX, enemyY)
