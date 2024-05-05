@@ -25,6 +25,12 @@ background = pygame.transform.scale(background, (800, 600))
 laser = pygame.mixer.Sound("pewpew_2.wav")
 boom = pygame.mixer.Sound("boom2.wav")
 
+# game over screen
+font = pygame.font.Font("FreeSansBold.ttf", 64)
+def game_over_text():
+     label = font.render("GAME OVER", True, (255, 255, 255))
+     screen.blit(label, (200, 250))
+
 # player
 playerImg = pygame.image.load("spaceship.png").convert_alpha()
 playerImg = pygame.transform.scale(playerImg, (64, 64))
@@ -57,7 +63,7 @@ for i in range(enemyNumber):
     # enemyImg = pygame.transform.scale(enemyImg, (64, 64))
     enemyX.append(random.randint(0, 735))
     enemyY.append(random.randint(50, 150))
-    enemyX_change.append(0.08)
+    enemyX_change.append(0.2)
     enemyY_change.append(40)
 
 def enemy(x, y, i):
@@ -127,10 +133,10 @@ while running:
         enemyX[i] += enemyX_change[i]
 
         if enemyX[i]<=0:
-            enemyX_change[i] = 0.08
+            enemyX_change[i] = 0.2
             enemyY[i] += enemyY_change[i]
         elif enemyX[i] >= 736:
-            enemyX_change[i] = -0.08
+            enemyX_change[i] = -0.2
             enemyY[i] += enemyY_change[i]
 
         # collision
@@ -143,6 +149,12 @@ while running:
              enemyY[i] = random.randint(50, 150)
 
         enemy(enemyX[i], enemyY[i], i)
+
+        # game over
+        game_over = isCollision(enemyX[i], enemyY[i], playerX, playerY)
+        if game_over:
+             boom.play()
+             game_over_text()
 
     # bullet movement
     if bulletY <= 0:
