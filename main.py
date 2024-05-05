@@ -1,6 +1,7 @@
 import pygame
 import random
 import threading
+import math
 
 # initialize
 pygame.init()
@@ -39,7 +40,7 @@ bullet_state = "ready"
 # enemy
 enemyImg = pygame.image.load("enemy.png").convert_alpha()
 # enemyImg = pygame.transform.scale(enemyImg, (64, 64))
-enemyX = random.randint(0, 800)
+enemyX = random.randint(0, 735)
 enemyY = random.randint(50, 150)
 enemyX_change = 0.08
 enemyY_change = 40
@@ -81,7 +82,7 @@ while running:
     if is_key_pressed[pygame.K_RIGHT]:
         playerX_change += 0.005
     if is_key_pressed[pygame.K_SPACE]:
-        if bullet_state is "ready":
+        if bullet_state == "ready":
                         bulletX = playerX
                         fire_bullet(bulletX, bulletY)
                     
@@ -96,8 +97,14 @@ while running:
 
     # collision detection
 
-    if abs(enemyX - bulletX) < 20 and abs(enemyY - bulletY) < 20:
-         print("Hit!")
+    """ if abs(enemyX - bulletX) < 20 and abs(enemyY - bulletY) < 20:
+         print("Hit!") """
+    def isCollision(enemyX, enemyY, bulletX, bulletY):
+         distance = math.sqrt((math.pow(enemyX-bulletX,2)) + (math.pow(enemyY-bulletY, 2)))
+         if distance < 27:
+              return True
+         else:
+              return False
 
     # enemy moving down when they hit the wall
     enemyX += enemyX_change
@@ -114,10 +121,18 @@ while running:
         bulletY = playerY - 30
         bullet_state = "ready"
 
-    if bullet_state is "fire":
+    if bullet_state == "fire":
         fire_bullet(bulletX, bulletY)
         bulletY -= bulletY_change
     
+    # collision
+    collision = isCollision(enemyX, enemyY, bulletX, bulletY)
+    if collision:
+         bulletY = playerY - 30
+         bullet_state = "ready"
+         enemyX = random.randint(0, 735)
+         enemyY = random.randint(50, 150)
+
     player(playerX, playerY)
     enemy(enemyX, enemyY)
     pygame.display.update()
