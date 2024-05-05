@@ -1,9 +1,12 @@
 import pygame
 import random
+import time
 import threading
 import math
+from pygame import mixer
 
 # initialize
+pygame.mixer.init()
 pygame.init()
 
 # create screen
@@ -17,6 +20,10 @@ pygame.display.set_icon(icon)
 # background
 background = pygame.image.load("background.jpg").convert_alpha()
 background = pygame.transform.scale(background, (800, 600))
+
+# sounds
+laser = pygame.mixer.Sound("pewpew_2.wav")
+boom = pygame.mixer.Sound("boom2.wav")
 
 # player
 playerImg = pygame.image.load("spaceship.png").convert_alpha()
@@ -91,6 +98,7 @@ while running:
         playerX_change += 0.005
     if is_key_pressed[pygame.K_SPACE]:
         if bullet_state == "ready":
+                        laser.play()
                         bulletX = playerX
                         fire_bullet(bulletX, bulletY)
                     
@@ -128,6 +136,7 @@ while running:
         # collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
         if collision:
+             boom.play()
              bulletY = playerY - 30
              bullet_state = "ready"
              enemyX[i] = random.randint(0, 735)
