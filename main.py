@@ -52,20 +52,43 @@ bulletY_change = 5
 bullet_state = "ready"
 
 # enemy
-enemyImg = []
+class Enemy:
+     def __init__(self, image, x, y, speed, skip, direction):
+        self.image = image
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.skip = skip
+        self.direction = direction
+
+     def collision(self, obstacleX, obstacleY):
+        distance = math.sqrt((math.pow(self.x-obstacleX,2)) + (math.pow(self.y-obstacleY, 2)))
+        if distance < 27:
+              return True
+        else:
+              return False
+
+invaders = []
+
+""" enemyImg = []
 enemyX = []
 enemyY = []
 enemyX_change = []
-enemyY_change = []
+enemyY_change = [] """
 enemyNumber = 6
 for i in range(enemyNumber):
      
-    enemyImg.append(pygame.image.load("enemy.png").convert_alpha())
-    # enemyImg = pygame.transform.scale(enemyImg, (64, 64))
-    enemyX.append(random.randint(0, 735))
-    enemyY.append(random.randint(50, 150))
-    enemyX_change.append(2)
-    enemyY_change.append(40)
+     i = Enemy(pygame.image.load("enemy.png").convert_alpha(), random.randint(0, 735), random.randint(50, 150), 2, 40, 1)
+     
+     invaders.append(i)
+
+     """ enemyImg.append(pygame.image.load("enemy.png").convert_alpha())
+     # enemyImg = pygame.transform.scale(enemyImg, (64, 64))
+     enemyX.append(random.randint(0, 735))
+     enemyY.append(random.randint(50, 150))
+     enemyX_change.append(2)
+     enemyY_change.append(40) """
+
 
 def enemy(x, y, i):
     screen.blit(enemyImg[i], (x, y))
@@ -115,8 +138,8 @@ while running:
     # horizontal boundaries
     if playerX<=0:
         playerX = 0
-    elif playerX >= 736:
-        playerX = 736
+    elif playerX >= windowSize[0] - playerImg.get_size()[0]:
+        playerX = windowSize[0] - playerImg.get_size()[0]
 
     # collision detection
 
@@ -130,29 +153,27 @@ while running:
               return False
 
     # enemy moving down when they hit the wall
-    for i in range(enemyNumber):
-        enemyX[i] += enemyX_change[i]
+    for i in invaders:
+        i.x += i.speed * i.direction
 
-        if enemyX[i]<=0:
-            enemyX_change[i] = 2
-            enemyY[i] += enemyY_change[i]
-        elif enemyX[i] >= 736:
-            enemyX_change[i] = -2
-            enemyY[i] += enemyY_change[i]
+        if i.x <=0 or i.x >= windowSize[0] - i.image.get_size()[0]:
+            # enemyX_change[i] = 2
+            i.y += i.skip
+            i.direction *= -1
 
         # collision
-        collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+        collision = i.collision(bulletX, bulletY)
         if collision:
              boom.play()
              bulletY = playerY - 30
              bullet_state = "ready"
-             enemyX[i] = random.randint(0, 735)
-             enemyY[i] = random.randint(50, 150)
+             i.x = random.randint(0, 735)
+             i.y = random.randint(50, 150)
 
-        enemy(enemyX[i], enemyY[i], i)
+        screen.blit(i.image, (i.x, i.y))
 
         # game over
-        game_over = isCollision(enemyX[i], enemyY[i], playerX, playerY)
+        game_over = isCollision(i.x, i.y, playerX, playerY)
         if game_over:
              boom.play()
              game_over_text()
