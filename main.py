@@ -1,8 +1,5 @@
-import pygame
-import random
-import time
+import pygame, random, math, sys, time
 import threading
-import math
 from pygame import mixer
 
 # initialize
@@ -10,7 +7,8 @@ pygame.mixer.init()
 pygame.init()
 
 # create screen
-screen = pygame.display.set_mode((800, 600))
+windowSize = (800, 600)
+screen = pygame.display.set_mode(windowSize)
 
 # title and icon
 pygame.display.set_caption("Space Invaders!")
@@ -25,8 +23,11 @@ background = pygame.transform.scale(background, (800, 600))
 laser = pygame.mixer.Sound("pewpew_2.wav")
 boom = pygame.mixer.Sound("boom2.wav")
 
+# clock
+clock = pygame.time.Clock()
+
 # game over screen
-font = pygame.font.Font("FreeSansBold.ttf", 64)
+font = pygame.font.SysFont("arial", 64)
 def game_over_text():
      label = font.render("GAME OVER", True, (255, 255, 255))
      screen.blit(label, (200, 250))
@@ -47,7 +48,7 @@ bullet = pygame.transform.scale(bullet, (20, 20))
 bullet = pygame.transform.rotate(bullet, 90)
 bulletX = 0
 bulletY = playerY - 30
-bulletY_change = 1
+bulletY_change = 5
 bullet_state = "ready"
 
 # enemy
@@ -63,7 +64,7 @@ for i in range(enemyNumber):
     # enemyImg = pygame.transform.scale(enemyImg, (64, 64))
     enemyX.append(random.randint(0, 735))
     enemyY.append(random.randint(50, 150))
-    enemyX_change.append(0.2)
+    enemyX_change.append(2)
     enemyY_change.append(40)
 
 def enemy(x, y, i):
@@ -89,7 +90,7 @@ while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+             sys.exit()
 
         if event.type == pygame.KEYUP:
             playerX_change = 0
@@ -99,9 +100,9 @@ while running:
     is_key_pressed = pygame.key.get_pressed()
 
     if is_key_pressed[pygame.K_LEFT]:
-        playerX_change -= 0.005
+        playerX_change -= 0.5
     if is_key_pressed[pygame.K_RIGHT]:
-        playerX_change += 0.005
+        playerX_change += 0.5
     if is_key_pressed[pygame.K_SPACE]:
         if bullet_state == "ready":
                         laser.play()
@@ -133,10 +134,10 @@ while running:
         enemyX[i] += enemyX_change[i]
 
         if enemyX[i]<=0:
-            enemyX_change[i] = 0.2
+            enemyX_change[i] = 2
             enemyY[i] += enemyY_change[i]
         elif enemyX[i] >= 736:
-            enemyX_change[i] = -0.2
+            enemyX_change[i] = -2
             enemyY[i] += enemyY_change[i]
 
         # collision
@@ -169,4 +170,7 @@ while running:
 
     player(playerX, playerY)
     
+    
+    clock.tick(60)
+
     pygame.display.update()
