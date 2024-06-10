@@ -1,4 +1,5 @@
 import pygame, random, math, sys, time
+from spaceship import Spaceship
 import threading
 from pygame import mixer
 
@@ -56,19 +57,14 @@ class Player(pygame.sprite.Sprite):
          self.rect.x += self.moveX
 
 spaceship = Player(370, 520, "spaceship.png")
-player_group = pygame.sprite.Group()
-player_group.add(spaceship)
+player_group = pygame.sprite.GroupSingle()
+player = Spaceship(windowSize[0], windowSize[1])
+player_group.add(player)
 
-playerImg = pygame.image.load("spaceship.png").convert_alpha()
-playerImg = pygame.transform.scale(playerImg, (64, 64))
-# spaceship.left = 370
-# spaceship.top = 520
-# spaceship.left_change = 0
 
-def player(x, y):
-    screen.blit(playerImg, (x, y))
 
 # bullet
+
 bullet = pygame.image.load("bullet.png").convert_alpha()
 bullet = pygame.transform.scale(bullet, (20, 20))
 bullet = pygame.transform.rotate(bullet, 90)
@@ -79,6 +75,21 @@ bulletY_change = 5
 bullet_state = "ready"
 
 # enemy
+class Alien(pygame.sprite.Sprite):
+    def __init__(self, img_path):
+        super().__init__()
+        self.image = pygame.image.load(img_path).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (64, 64))
+        self.rect = self.image.get_rect()
+        self.rect.x = self.rect.width
+        self.rect.y = self.rect.height
+
+        self.x = float(self.rect.x)
+
+invader = Alien("enemy.png")
+invader_fleet = pygame.sprite.Group()
+invader_fleet.add(invader)
+
 class Enemy:
      def __init__(self, image, x, y, speed, skip, direction):
         self.image = image
@@ -116,9 +127,10 @@ for i in range(enemyNumber):
      enemyX_change.append(2)
      enemyY_change.append(40) """
 
-
+'''
 def enemy(x, y, i):
     screen.blit(enemyImg[i], (x, y))
+'''
 
 # fire bullet
 def fire_bullet(x, y):
@@ -205,7 +217,7 @@ while running:
              i.x = random.randint(0, 735)
              i.y = random.randint(50, 150)
 
-        screen.blit(i.image, (i.x, i.y))
+        # screen.blit(i.image, (i.x, i.y))
 
         # game over
         game_over = isCollision(i.x, i.y, spaceship.rect.x, spaceship.rect.y)
@@ -226,7 +238,10 @@ while running:
 
     # player(spaceship.left, spaceship.top)
     player_group.update()
+    invader_fleet.update()
     player_group.draw(screen)
+    player_group.sprite.lasers.draw(screen)
+    invader_fleet.draw(screen)
     
     clock.tick(60)
 
