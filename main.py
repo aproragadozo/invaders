@@ -13,14 +13,14 @@ screen = pygame.display.set_mode(windowSize)
 
 # title and icon
 pygame.display.set_caption("Space Invaders!")
-icon = pygame.image.load("ufo.png").convert_alpha()
+icon = pygame.image.load("graphics/ufo.png").convert_alpha()
 pygame.display.set_icon(icon)
 
 # make mouse invisible
 pygame.mouse.set_visible(False)
 
 # background
-background = pygame.image.load("background.jpg").convert_alpha()
+background = pygame.image.load("graphics/background.jpg").convert_alpha()
 background = pygame.transform.scale(background, (800, 600))
 
 # sounds
@@ -70,7 +70,7 @@ bullet = pygame.transform.scale(bullet, (20, 20))
 bullet = pygame.transform.rotate(bullet, 90)
 bulletX = 0
 # bulletY = spaceship.top - 30
-bulletY = spaceship.rect.y - 30
+# bulletY = spaceship.rect.y - 30
 bulletY_change = 5
 bullet_state = "ready"
 
@@ -86,7 +86,7 @@ class Alien(pygame.sprite.Sprite):
 
         self.x = float(self.rect.x)
 
-invader = Alien("enemy.png")
+invader = Alien("graphics/enemy.png")
 invader_fleet = pygame.sprite.Group()
 invader_fleet.add(invader)
 
@@ -116,7 +116,7 @@ enemyY_change = [] """
 enemyNumber = 6
 for i in range(enemyNumber):
      
-     i = Enemy(pygame.image.load("enemy.png").convert_alpha(), random.randint(0, 735), random.randint(50, 150), 2, 40, 1)
+     # i = Enemy(pygame.image.load("enemy.png").convert_alpha(), random.randint(0, 735), random.randint(50, 150), 2, 40, 1)
      
      invaders.append(i)
 
@@ -161,32 +161,32 @@ while running:
 
 # spaceship movement, bullet firing
 
-    is_key_pressed = pygame.key.get_pressed()
+    # is_key_pressed = pygame.key.get_pressed()
 
-    if is_key_pressed[pygame.K_LEFT]:
+    # if is_key_pressed[pygame.K_LEFT]:
         #spaceship.left_change -= 0.5
         #spaceship.x_change -= 0.5
-        print(spaceship.rect.x)
-        spaceship.moveLeft()
-        print(spaceship.rect.x)
-    if is_key_pressed[pygame.K_RIGHT]:
+        # print(spaceship.rect.x)
+        # spaceship.moveLeft()
+        # print(spaceship.rect.x)
+    # if is_key_pressed[pygame.K_RIGHT]:
         # spaceship.left_change += 0.5
         #spaceship.x_change += 0.5
-        spaceship.moveRight()
-    if is_key_pressed[pygame.K_SPACE]:
-        if bullet_state == "ready":
-            laser.play()
-            bulletX = spaceship.rect.x
-            fire_bullet(bulletX, bulletY)
+        # spaceship.moveRight()
+    #if is_key_pressed[pygame.K_SPACE]:
+        # if bullet_state == "ready":
+            # laser.play()
+            # bulletX = spaceship.rect.x
+            # fire_bullet(bulletX, bulletY)
                     
         
     # spaceship.left += spaceship.left_change
 
     # horizontal boundaries
-    if spaceship.rect.x<=0:
-        spaceship.rect.x = 0
-    elif spaceship.rect.x >= windowSize[0] - spaceship.rect.width:
-        spaceship.rect.x = windowSize[0] - spaceship.rect.width
+    # if spaceship.rect.x<=0:
+        # spaceship.rect.x = 0
+    # elif spaceship.rect.x >= windowSize[0] - spaceship.rect.width:
+        # spaceship.rect.x = windowSize[0] - spaceship.rect.width
 
     # collision detection
 
@@ -200,43 +200,45 @@ while running:
               return False
 
     # enemy moving down when they hit the wall
-    for i in invaders:
-        i.x += i.speed * i.direction
+    # for i in invaders:
+        # i.x += i.speed * i.direction
 
-        if i.x <=0 or i.x >= windowSize[0] - i.image.get_size()[0]:
+        # if i.x <=0 or i.x >= windowSize[0] - i.image.get_size()[0]:
             # enemyX_change[i] = 2
-            i.y += i.skip
-            i.direction *= -1
+            # i.y += i.skip
+            # i.direction *= -1
 
         # collision
-        collision = i.collision(bulletX, bulletY)
-        if collision:
-             boom.play()
-             bulletY = spaceship.rect.y - 30
-             bullet_state = "ready"
-             i.x = random.randint(0, 735)
-             i.y = random.randint(50, 150)
+        # collision = i.collision(bulletX, bulletY)
+        # if collision:
+             # boom.play()
+             # bulletY = spaceship.rect.y - 30
+             # bullet_state = "ready"
+             # i.x = random.randint(0, 735)
+             # i.y = random.randint(50, 150)
 
         # screen.blit(i.image, (i.x, i.y))
 
         # game over
-        game_over = isCollision(i.x, i.y, spaceship.rect.x, spaceship.rect.y)
-        if game_over:
-             boom.play()
-             game_over_text()
+        # game_over = isCollision(i.x, i.y, spaceship.rect.x, spaceship.rect.y)
+        # if game_over:
+             # boom.play()
+             # game_over_text()
 
     # bullet movement
-    if bulletY <= 0:
-        bulletY = spaceship.rect.y - 30
-        bullet_state = "ready"
+    # if bulletY <= 0:
+        # bulletY = spaceship.rect.y - 30
+        # bullet_state = "ready"
 
-    if bullet_state == "fire":
-        fire_bullet(bulletX, bulletY)
-        bulletY -= bulletY_change
+    # if bullet_state == "fire":
+        # fire_bullet(bulletX, bulletY)
+        # bulletY -= bulletY_change
     
     
 
     # player(spaceship.left, spaceship.top)
+
+    # drawing
     player_group.update()
     invader_fleet.update()
     player_group.draw(screen)

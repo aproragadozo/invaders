@@ -7,7 +7,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.image = pygame.image.load("graphics/spaceship.png")
-        self.rect = self.image.get_rect(midbottom= (screen_width/2, screen_height))
+        self.rect = self.image.get_rect(midbottom= (screen_width/2, screen_height-20))
         self.speed = 6
         self.lasers = pygame.sprite.Group()
 
