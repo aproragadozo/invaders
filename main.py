@@ -1,5 +1,6 @@
 import pygame, random, math, sys, time
 from spaceship import Spaceship
+from alien import AnimatedAlien
 import threading
 from pygame import mixer
 
@@ -22,6 +23,10 @@ pygame.mouse.set_visible(False)
 # background
 background = pygame.image.load("graphics/background.jpg").convert_alpha()
 background = pygame.transform.scale(background, (800, 600))
+
+# spritesheet with the aliens
+spritesheet = pygame.image.load('graphics/aliensprite.png').convert_alpha()
+full_spritesheet = pygame.image.load('graphics/sprite-sheet.jpg').convert_alpha()
 
 # sounds
 laser = pygame.mixer.Sound("pewpew_2.wav")
@@ -56,7 +61,7 @@ class Player(pygame.sprite.Sprite):
      def update(self):
          self.rect.x += self.moveX
 
-spaceship = Player(370, 520, "spaceship.png")
+spaceship = Player(370, 520, "graphics/spaceship.png")
 player_group = pygame.sprite.GroupSingle()
 player = Spaceship(windowSize[0], windowSize[1])
 player_group.add(player)
@@ -65,7 +70,8 @@ player_group.add(player)
 
 # bullet
 
-bullet = pygame.image.load("bullet.png").convert_alpha()
+# bullet = pygame.image.load("bullet.png").convert_alpha()
+bullet = full_spritesheet.subsurface((475, 890, 25, 50)).convert_alpha()
 bullet = pygame.transform.scale(bullet, (20, 20))
 bullet = pygame.transform.rotate(bullet, 90)
 bulletX = 0
@@ -86,9 +92,14 @@ class Alien(pygame.sprite.Sprite):
 
         self.x = float(self.rect.x)
 
-invader = Alien("graphics/enemy.png")
+#invader = Alien("graphics/enemy.png")
+
 invader_fleet = pygame.sprite.Group()
-invader_fleet.add(invader)
+for row in range(3):
+     for col in range(6):
+          pos = (col * 80 + 100, row * 80 + 50)
+          invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+          invader_fleet.add(invader)
 
 class Enemy:
      def __init__(self, image, x, y, speed, skip, direction):
@@ -113,19 +124,20 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change = [] """
+"""
 enemyNumber = 6
 for i in range(enemyNumber):
      
      # i = Enemy(pygame.image.load("enemy.png").convert_alpha(), random.randint(0, 735), random.randint(50, 150), 2, 40, 1)
      
      invaders.append(i)
-
-     """ enemyImg.append(pygame.image.load("enemy.png").convert_alpha())
-     # enemyImg = pygame.transform.scale(enemyImg, (64, 64))
-     enemyX.append(random.randint(0, 735))
-     enemyY.append(random.randint(50, 150))
-     enemyX_change.append(2)
-     enemyY_change.append(40) """
+"""
+""" enemyImg.append(pygame.image.load("enemy.png").convert_alpha())
+# enemyImg = pygame.transform.scale(enemyImg, (64, 64))
+enemyX.append(random.randint(0, 735))
+enemyY.append(random.randint(50, 150))
+enemyX_change.append(2)
+enemyY_change.append(40) """
 
 '''
 def enemy(x, y, i):

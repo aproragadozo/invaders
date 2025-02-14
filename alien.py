@@ -2,21 +2,26 @@ import pygame
 from typing import List, Tuple
 
 class AnimatedAlien(pygame.sprite.Sprite):
-    def __init__(self, pos: Tuple[int, int], sprite_paths: List[str]):
+    def __init__(self, pos: Tuple[int, int], spritesheet, 
+                 frame_coords: List[Tuple[int, int]], sprite_size: Tuple[int, int]):
         """
-        Initialize animated alien enemy
+        Initialize animated alien enemy using spritesheet
         
         Args:
             pos: Initial (x,y) position
-            sprite_paths: List of paths to sprite images for animation states
+            spritesheet: SpriteSheet object containing all sprites
+            frame_coords: List of (x,y) coordinates for each animation frame in the spritesheet
+            sprite_size: (width, height) of each sprite frame
         """
         super().__init__()
         
-        # Load sprite states
+        # Extract sprites from spritesheet
         self.sprites = []
-        for path in sprite_paths:
-            sprite = pygame.image.load(path).convert_alpha()
-            sprite = pygame.transform.scale(sprite, (64, 64))
+        for x, y in frame_coords:
+            sprite = spritesheet.subsurface(x, y, sprite_size[0], sprite_size[1])
+            # Scale if needed (64x64 is target size from original code)
+            if sprite_size != (64, 64):
+                sprite = pygame.transform.scale(sprite, (64, 64))
             self.sprites.append(sprite)
             
         # Animation properties
@@ -50,11 +55,3 @@ class AnimatedAlien(pygame.sprite.Sprite):
         """Update alien position and animation state"""
         # Move horizontally
         self.rect.x += self.speed * self.direction
-        
-        # Check screen boundaries
-        if self.rect.right >= 800 or self.rect.left <= 0:
-            self.direction *= -1  # Reverse direction
-            self.rect.y += self.drop_distance  # Move down
-            
-        # Update animation
-        self.animate(pygame.time.get_ticks())

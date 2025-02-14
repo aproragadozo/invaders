@@ -3,10 +3,11 @@ pygame.init()
 screen = pygame.display.set_mode((300, 300))
 pygame.display.set_caption('Drawing')
 
-alien = pygame.image.load('graphics/aliensprite.png').convert_alpha()
+spritesheet = pygame.image.load('graphics/sprite-sheet.jpg').convert_alpha()
 
-sprite_one = alien.subsurface((25, 132, 90, 70))
-sprite_two = alien.subsurface((130, 132, 90, 70))
+sprite_one = spritesheet.subsurface((25, 132, 90, 70))
+sprite_two = spritesheet.subsurface((130, 132, 90, 70))
+bullet = spritesheet.subsurface((475, 890, 25, 50))
 
 run = True
 while run:
@@ -15,8 +16,9 @@ while run:
             run = False
 
     screen.fill((60, 0, 100))
-    screen.blit(sprite_one, (50, 50))
-    screen.blit(sprite_two, (150, 50))
+    # screen.blit(sprite_one, (0, 0))
+    # screen.blit(sprite_two, (100, 0))
+    screen.blit(bullet, (150, 0))
     pygame.display.update()
 
 pygame.quit()
