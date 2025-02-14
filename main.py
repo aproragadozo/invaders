@@ -1,6 +1,7 @@
 import pygame, random, math, sys, time
+from pygame.sprite import Group, GroupSingle, spritecollide
 from spaceship import Spaceship
-from alien import AnimatedAlien
+from alien import AnimatedAlien, AlienFleet, SpriteSheet
 import threading
 from pygame import mixer
 
@@ -21,12 +22,12 @@ pygame.display.set_icon(icon)
 pygame.mouse.set_visible(False)
 
 # background
-background = pygame.image.load("graphics/background.jpg").convert_alpha()
-background = pygame.transform.scale(background, (800, 600))
+# background = pygame.image.load("graphics/background.jpg").convert_alpha()
+# background = pygame.transform.scale(background, (800, 600))
 
 # spritesheet with the aliens
-spritesheet = pygame.image.load('graphics/aliensprite.png').convert_alpha()
-full_spritesheet = pygame.image.load('graphics/sprite-sheet.jpg').convert_alpha()
+spritesheet = SpriteSheet('graphics/aliensprite.png')
+full_spritesheet = SpriteSheet('graphics/sprite-sheet.jpg')
 
 # sounds
 laser = pygame.mixer.Sound("pewpew_2.wav")
@@ -71,7 +72,7 @@ player_group.add(player)
 # bullet
 
 # bullet = pygame.image.load("bullet.png").convert_alpha()
-bullet = full_spritesheet.subsurface((475, 890, 25, 50)).convert_alpha()
+bullet = full_spritesheet.get_sprite(475, 890, 25, 50).convert_alpha()
 bullet = pygame.transform.scale(bullet, (20, 20))
 bullet = pygame.transform.rotate(bullet, 90)
 bulletX = 0
@@ -94,7 +95,7 @@ class Alien(pygame.sprite.Sprite):
 
 #invader = Alien("graphics/enemy.png")
 
-invader_fleet = pygame.sprite.Group()
+invader_fleet = AlienFleet()
 for row in range(3):
      for col in range(6):
           pos = (col * 80 + 100, row * 80 + 50)
@@ -157,7 +158,8 @@ while running:
     screen.fill((188, 127, 205))
 
     # background image
-    screen.blit(background, (0, 0))
+    # screen.blit(background, (0, 0))
+    screen.fill ((0, 0, 0))
 
 
     # being able to quit the game
@@ -210,6 +212,14 @@ while running:
               return True
          else:
               return False
+         
+    # Check for collisions between bullets and aliens
+    for laser in player_group.sprite.lasers:
+        # pygame.sprite.spritecollide returns a list of sprites that collided
+        aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)  # True means kill the alien on hit
+        if aliens_hit:
+            laser.kill()  # Remove the bullet
+            boom.play()
 
     # enemy moving down when they hit the wall
     # for i in invaders:
@@ -253,6 +263,14 @@ while running:
     # drawing
     player_group.update()
     invader_fleet.update()
+
+# Add collision detection
+    for laser in player_group.sprite.lasers:
+        aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)
+        if aliens_hit:
+            laser.kill()
+            boom.play()
+
     player_group.draw(screen)
     player_group.sprite.lasers.draw(screen)
     invader_fleet.draw(screen)
