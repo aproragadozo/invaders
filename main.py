@@ -299,7 +299,7 @@ while running:
             invader_fleet.empty()
             for row in range(3):
                 for col in range(8):
-                    pos = (col * 80 + 100, row * 80 + 50)
+                    pos = (col * 50 + 50, row * 50 + 40)
                     invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
                     invader_fleet.add(invader)
     
