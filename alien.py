@@ -21,8 +21,8 @@ class AnimatedAlien(pygame.sprite.Sprite):
         for x, y in frame_coords:
             sprite = spritesheet.get_sprite(x, y, sprite_size[0], sprite_size[1])
             # Scale if needed
-            if sprite_size != (64, 64):
-                sprite = pygame.transform.scale(sprite, (64, 64))
+            if sprite_size != (32, 32):
+                sprite = pygame.transform.scale(sprite, (32, 32))
             self.sprites.append(sprite)
             
         # Animation properties
@@ -47,7 +47,7 @@ class AnimatedAlien(pygame.sprite.Sprite):
 class AlienFleet(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
-        self.speed = 2
+        self.speed = 1
         self.direction = 1
         self.drop_distance = 40
     

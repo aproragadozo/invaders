@@ -8,6 +8,8 @@ from pygame import mixer
 # initialize
 pygame.mixer.init()
 pygame.init()
+# this is so that I can add a game over screen without quitting the game loop
+game_on = True
 
 # create screen
 windowSize = (800, 600)
@@ -97,8 +99,8 @@ class Alien(pygame.sprite.Sprite):
 
 invader_fleet = AlienFleet()
 for row in range(3):
-     for col in range(6):
-          pos = (col * 80 + 100, row * 80 + 50)
+     for col in range(8):
+          pos = (col * 50 + 50, row * 50 + 40)
           invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
           invader_fleet.add(invader)
 
@@ -260,20 +262,46 @@ while running:
 
     # player(spaceship.left, spaceship.top)
 
-    # drawing
-    player_group.update()
-    invader_fleet.update()
+    # drawing (but only if the player is still alive)
+    if game_on:
+        player_group.update()
+        invader_fleet.update()
 
-# Add collision detection
-    for laser in player_group.sprite.lasers:
-        aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)
-        if aliens_hit:
-            laser.kill()
+    # Add collision detection
+        for laser in player_group.sprite.lasers:
+            aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)
+            if aliens_hit:
+                laser.kill()
+                boom.play()
+
+        if pygame.sprite.spritecollide(player_group.sprite, invader_fleet, True):
             boom.play()
+            game_over_text()
+            game_on = False
 
-    player_group.draw(screen)
-    player_group.sprite.lasers.draw(screen)
-    invader_fleet.draw(screen)
+        player_group.draw(screen)
+        player_group.sprite.lasers.draw(screen)
+        invader_fleet.draw(screen)
+    else: # if the player dies
+        game_over_text()
+        restart_font = pygame.font.SysFont("arial", 32)
+        restart_text = restart_font.render("Press R to restart", True, (255, 255, 255))
+        screen.blit(restart_text, (250, 350))
+        
+        # Add restart functionality
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_r]:
+            # Reset game state
+            game_on = True
+            # Reset player position
+            player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
+            # Recreate alien fleet
+            invader_fleet.empty()
+            for row in range(3):
+                for col in range(8):
+                    pos = (col * 80 + 100, row * 80 + 50)
+                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+                    invader_fleet.add(invader)
     
     clock.tick(60)
 

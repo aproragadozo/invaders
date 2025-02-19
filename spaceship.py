@@ -20,10 +20,11 @@ class Spaceship(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT]:
             if self.rect.x >= 0:
                 self.rect.x -= self.speed
-        if keys[pygame.K_SPACE]:
+        if keys[pygame .K_SPACE]:
             if len(self.lasers) == 0:
                 laser = Laser(self.rect.center, self.speed, self.screen_height)
                 self.lasers.add(laser)
+            
     
     def update(self):
         self.get_input()
