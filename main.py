@@ -216,12 +216,13 @@ while running:
               return False
          
     # Check for collisions between bullets and aliens
-    for laser in player_group.sprite.lasers:
-        # pygame.sprite.spritecollide returns a list of sprites that collided
-        aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)  # True means kill the alien on hit
-        if aliens_hit:
-            laser.kill()  # Remove the bullet
-            boom.play()
+    if player_group.sprite:
+        for laser in player_group.sprite.lasers:
+            # pygame.sprite.spritecollide returns a list of sprites that collided
+            aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)  # True means kill the alien on hit
+            if aliens_hit:
+                laser.kill()  # Remove the bullet
+                boom.play()
 
     # enemy moving down when they hit the wall
     # for i in invaders:
@@ -273,15 +274,31 @@ while running:
             if aliens_hit:
                 laser.kill()
                 boom.play()
+        for alien in invader_fleet:
+            for laser in alien.lasers:
+                if pygame.sprite.spritecollide(laser, player_group, True):
+                    boom.play()
+                    game_over_text()
+                    game_on = False
+                    break
+            if not game_on:
+                break
 
-        if pygame.sprite.spritecollide(player_group.sprite, invader_fleet, True):
-            boom.play()
-            game_over_text()
-            game_on = False
+        if player_group.sprite:
+            # only check for a collision if the player is still alive
+            # otherwise it gets weird
+            if pygame.sprite.spritecollide(player_group.sprite, invader_fleet, True):
+                boom.play()
+                game_over_text()
+                game_on = False
 
         player_group.draw(screen)
-        player_group.sprite.lasers.draw(screen)
+        if player_group.sprite:
+            player_group.sprite.lasers.draw(screen)
         invader_fleet.draw(screen)
+        # make the alien shits show up
+        for alien in invader_fleet:
+            alien.lasers.draw(screen)
     else: # if the player dies
         game_over_text()
         restart_font = pygame.font.SysFont("arial", 32)

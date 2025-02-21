@@ -1,5 +1,7 @@
 import pygame
+import random
 from typing import List, Tuple
+from laser import Laser
 
 
 class SpriteSheet:
@@ -34,15 +36,25 @@ class AnimatedAlien(pygame.sprite.Sprite):
         self.image = self.sprites[self.current_sprite]
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
+
+        # Give them lasers
+        self.lasers = pygame.sprite.Group()
         
-    def animate(self, current_time: int) -> None:
+    def animate(self, current_time: int):
         if current_time - self.animation_timer > self.ANIMATION_DELAY:
             self.current_sprite = (self.current_sprite + 1) % len(self.sprites)
             self.image = self.sprites[self.current_sprite]
             self.animation_timer = current_time
+
+    def shoot_at_random(self):
+        laser = Laser(self.rect.midbottom, -5, 600, alien_firing=True)
+        self.lasers.add(laser)
             
-    def update(self) -> None:
+    def update(self):
         self.animate(pygame.time.get_ticks())
+        if random.random() < 0.001:
+            self.shoot_at_random()
+        self.lasers.update()
 
 class AlienFleet(pygame.sprite.Group):
     def __init__(self):
