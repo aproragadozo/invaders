@@ -31,6 +31,9 @@ pygame.mouse.set_visible(False)
 spritesheet = SpriteSheet('graphics/aliensprite.png')
 full_spritesheet = SpriteSheet('graphics/sprite-sheet.jpg')
 
+# set up player
+player_group = pygame.sprite.GroupSingle()
+
 # sounds
 laser = pygame.mixer.Sound("pewpew_2.wav")
 boom = pygame.mixer.Sound("boom2.wav")
@@ -64,12 +67,17 @@ class Player(pygame.sprite.Sprite):
      def update(self):
          self.rect.x += self.moveX
 
-spaceship = Player(370, 520, "graphics/spaceship.png")
-player_group = pygame.sprite.GroupSingle()
-player = Spaceship(windowSize[0], windowSize[1])
-player_group.add(player)
+def set_up_player():
+    global player_group
+    player_group.empty()
+    spaceship = Player(370, 520, "graphics/spaceship.png")
+    player = Spaceship(windowSize[0], windowSize[1])
+    player_group.add(player)
 
+    if not player_group.sprite:
+        print("ERROR: Player was not added to player_group!")
 
+set_up_player()
 
 # bullet
 
@@ -171,9 +179,9 @@ while running:
              pygame.quit()
              sys.exit()
 
-        if event.type == pygame.KEYUP:
+        """if event.type == pygame.KEYUP:
             #spaceship.left_change = 0
-            spaceship.moveX = 0
+            spaceship.moveX = 0"""
 
 # spaceship movement, bullet firing
 
@@ -214,15 +222,6 @@ while running:
               return True
          else:
               return False
-         
-    # Check for collisions between bullets and aliens
-    if player_group.sprite:
-        for laser in player_group.sprite.lasers:
-            # pygame.sprite.spritecollide returns a list of sprites that collided
-            aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)  # True means kill the alien on hit
-            if aliens_hit:
-                laser.kill()  # Remove the bullet
-                boom.play()
 
     # enemy moving down when they hit the wall
     # for i in invaders:
@@ -265,38 +264,41 @@ while running:
 
     # drawing (but only if the player is still alive)
     if game_on:
+        # print("DEBUG: player_group.sprite exists?", player_group.sprite is not None)
         player_group.update()
         invader_fleet.update()
 
     # Add collision detection
-        for laser in player_group.sprite.lasers:
-            aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)
-            if aliens_hit:
-                laser.kill()
-                boom.play()
-        for alien in invader_fleet:
-            for laser in alien.lasers:
-                if pygame.sprite.spritecollide(laser, player_group, True):
+        if player_group.sprite and hasattr(player_group.sprite, 'lasers'):
+            for laser in player_group.sprite.lasers:
+                aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)
+                if aliens_hit:
+                    laser.kill()
                     boom.play()
-                    game_over_text()
-                    game_on = False
-                    break
-            if not game_on:
-                break
 
-        if player_group.sprite:
-            # only check for a collision if the player is still alive
-            # otherwise it gets weird
-            if pygame.sprite.spritecollide(player_group.sprite, invader_fleet, True):
+            player_group.sprite.lasers.draw(screen)
+
+            for alien in invader_fleet:
+                for laser in alien.lasers:
+                    if pygame.sprite.spritecollide(laser, player_group, False):
+                        boom.play()
+                        game_over_text()
+                        game_on = False
+                        player_group.empty()
+                        break
+                if not game_on:
+                    break
+            # the collision detection doesn't remove the player!
+            if player_group.sprite and isinstance(player_group.sprite, pygame.sprite.Sprite) and pygame.sprite.spritecollide(player_group.sprite, invader_fleet, False):
                 boom.play()
                 game_over_text()
                 game_on = False
 
-        player_group.draw(screen)
-        if player_group.sprite:
-            player_group.sprite.lasers.draw(screen)
+            # print("DEBUG: player_group.sprite exists?", player_group.sprite is not None)
+            player_group.draw(screen)
+            
         invader_fleet.draw(screen)
-        # make the alien shits show up
+    # make the alien shots show up
         for alien in invader_fleet:
             alien.lasers.draw(screen)
     else: # if the player dies
@@ -309,9 +311,12 @@ while running:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_r]:
             # Reset game state
+            print("DEBUG: Restarting game...")
             game_on = True
             # Reset player position
-            player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
+            set_up_player()
+            if player_group.sprite:
+                player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
             # Recreate alien fleet
             invader_fleet.empty()
             for row in range(3):

@@ -22,7 +22,7 @@ class Spaceship(pygame.sprite.Sprite):
                 self.rect.x -= self.speed
         if keys[pygame .K_SPACE]:
             if len(self.lasers) == 0:
-                laser = Laser(self.rect.center, self.speed, self.screen_height)
+                laser = Laser(self.rect.center, -self.speed, self.screen_height, alien_firing=False)
                 self.lasers.add(laser)
             
     
