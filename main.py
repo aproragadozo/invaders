@@ -164,7 +164,7 @@ def fire_bullet(x, y):
 # game loop
 running = True
 while running:
-
+    
     screen.fill((188, 127, 205))
 
     # background image
@@ -291,8 +291,12 @@ while running:
             # the collision detection doesn't remove the player!
             if player_group.sprite and isinstance(player_group.sprite, pygame.sprite.Sprite) and pygame.sprite.spritecollide(player_group.sprite, invader_fleet, False):
                 boom.play()
-                game_over_text()
-                game_on = False
+                player_group.sprite.lose_life()
+                if player_group.sprite.lives <= 0:
+                    game_over_text()
+                    game_on = False
+                else:
+                    player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
 
             # print("DEBUG: player_group.sprite exists?", player_group.sprite is not None)
             player_group.draw(screen)

@@ -10,6 +10,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom= (screen_width/2, screen_height-20))
         self.speed = 6
         self.lasers = pygame.sprite.Group()
+        self.lives = 3
 
     def get_input(self):
         keys = pygame.key.get_pressed()
@@ -25,7 +26,9 @@ class Spaceship(pygame.sprite.Sprite):
                 laser = Laser(self.rect.center, -self.speed, self.screen_height, alien_firing=False)
                 self.lasers.add(laser)
             
-    
+    def lose_life(self):
+        self.lives -= 1
+
     def update(self):
         self.get_input()
         self.lasers.update()
