@@ -49,6 +49,7 @@ def game_over_text():
 
 # player
 # should remove the x_change prop later
+"""
 class Player(pygame.sprite.Sprite):
      def __init__(self, pos_x, pos_y, img_path):
           super().__init__()
@@ -65,12 +66,12 @@ class Player(pygame.sprite.Sprite):
           self.moveX -= 0.05
 
      def update(self):
-         self.rect.x += self.moveX
+         self.rect.x += self.moveX"""
 
 def set_up_player():
     global player_group
     player_group.empty()
-    spaceship = Player(370, 520, "graphics/spaceship.png")
+    # spaceship = Player(370, 520, "graphics/spaceship.png")
     player = Spaceship(windowSize[0], windowSize[1])
     player_group.add(player)
 
@@ -281,53 +282,76 @@ while running:
                 for laser in alien.lasers:
                     if pygame.sprite.spritecollide(laser, player_group, False):
                         boom.play()
-                        game_over_text()
-                        game_on = False
-                        player_group.empty()
-                        break
-                if not game_on:
-                    break
+                        player_group.sprite.lose_life()
+                        if player_group.sprite.lives == 0:
+                            # if the player dies
+                            game_over_text()
+                            restart_font = pygame.font.SysFont("arial", 32)
+                            restart_text = restart_font.render("Press R to restart", True, (255, 255, 255))
+                            screen.blit(restart_text, (250, 350))
+                            
+                            # Add restart functionality
+                            keys = pygame.key.get_pressed()
+                            if keys[pygame.K_r]:
+                                # Reset game state
+                                # print("DEBUG: Restarting game...")
+                                game_on = True
+                                # Reset player position
+                                set_up_player()
+                                if player_group.sprite:
+                                    player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
+                                # Recreate alien fleet
+                                invader_fleet.empty()
+                                for row in range(3):
+                                    for col in range(8):
+                                        pos = (col * 50 + 50, row * 50 + 40)
+                                        invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+                                        invader_fleet.add(invader)
+                            #game_on = False # game over
+                            #player_group.empty()
+                        else:
+                            player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
+                        if not game_on:
+                            break
             # the collision detection doesn't remove the player!
             if player_group.sprite and isinstance(player_group.sprite, pygame.sprite.Sprite) and pygame.sprite.spritecollide(player_group.sprite, invader_fleet, False):
                 boom.play()
                 player_group.sprite.lose_life()
-                print(f"Player hit! Lives remaining: {player_group.sprite.lives}")
-                if player_group.sprite.lives <= 0:
+                if player_group.sprite.lives == 0:
+                    # if the player dies
                     game_over_text()
-                    game_on = False
+                    restart_font = pygame.font.SysFont("arial", 32)
+                    restart_text = restart_font.render("Press R to restart", True, (255, 255, 255))
+                    screen.blit(restart_text, (250, 350))
+                    
+                    # Add restart functionality
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_r]:
+                        # Reset game state
+                        # print("DEBUG: Restarting game...")
+                        game_on = True
+                        # Reset player position
+                        set_up_player()
+                        if player_group.sprite:
+                            player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
+                        # Recreate alien fleet
+                        invader_fleet.empty()
+                        for row in range(3):
+                            for col in range(8):
+                                pos = (col * 50 + 50, row * 50 + 40)
+                                invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+                                invader_fleet.add(invader)
+                    game_on = False # game over
+                    player_group.empty()
                 else:
                     player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
 
-            # print("DEBUG: player_group.sprite exists?", player_group.sprite is not None)
             player_group.draw(screen)
             
         invader_fleet.draw(screen)
     # make the alien shots show up
         for alien in invader_fleet:
             alien.lasers.draw(screen)
-    else: # if the player dies
-        game_over_text()
-        restart_font = pygame.font.SysFont("arial", 32)
-        restart_text = restart_font.render("Press R to restart", True, (255, 255, 255))
-        screen.blit(restart_text, (250, 350))
-        
-        # Add restart functionality
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_r]:
-            # Reset game state
-            print("DEBUG: Restarting game...")
-            game_on = True
-            # Reset player position
-            set_up_player()
-            if player_group.sprite:
-                player_group.sprite.rect.center = (windowSize[0]/2, windowSize[1] - 50)
-            # Recreate alien fleet
-            invader_fleet.empty()
-            for row in range(3):
-                for col in range(8):
-                    pos = (col * 50 + 50, row * 50 + 40)
-                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
-                    invader_fleet.add(invader)
     
     clock.tick(60)
 

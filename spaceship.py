@@ -28,6 +28,7 @@ class Spaceship(pygame.sprite.Sprite):
             
     def lose_life(self):
         self.lives -= 1
+        print(f"DEBUG: lose_life() called! Lives now: {self.lives}")
 
     def update(self):
         self.get_input()
