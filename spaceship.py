@@ -27,8 +27,8 @@ class Spaceship(pygame.sprite.Sprite):
                 self.lasers.add(laser)
             
     def lose_life(self):
-        self.lives -= 1
-        print(f"DEBUG: lose_life() called! Lives now: {self.lives}")
+        if self.lives > 0:
+            self.lives -= 1
 
     def update(self):
         self.get_input()
