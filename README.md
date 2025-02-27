@@ -5,7 +5,7 @@ A space invaders game that I'm teaching myself pygame with, and that I'd like to
 * explosion sprites
 * enemies speeding up as the move closer
 * ~~enemies having two states to imitate movement~~
-* enemies shooting/dropping bombs
+* ~~enemies shooting~~/dropping bombs
 * fly-across enemies for bonus points
 * ~~player lives~~
 * custom enemies that add temporary game features
