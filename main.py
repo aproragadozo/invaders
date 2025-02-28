@@ -91,6 +91,12 @@ while running:
              pygame.quit()
              sys.exit()
 
+    # display player lives
+    for i in range(player_group.sprite.lives):
+        life = pygame.image.load("graphics/spaceship.png").convert_alpha()
+        life = pygame.transform.scale(life, (20, 20))
+        screen.blit(life, (10 + i * 30, 10))
+
     # game over screen and restart logic
     if not game_on:
         game_over_text()
