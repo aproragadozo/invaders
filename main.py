@@ -53,6 +53,15 @@ def game_over_text():
      label = font.render("GAME OVER", True, (255, 255, 255))
      screen.blit(label, (200, 250))
 
+# victory screen
+def victory_text():
+    victory_label = font.render("VICTORY!", True, (255, 255, 0))  # Yellow text
+    screen.blit(victory_label, (270, 250))
+    
+    restart_font = pygame.font.SysFont("arial", 32)
+    restart_text = restart_font.render("Press R to play again", True, (255, 255, 255))
+    screen.blit(restart_text, (250, 350))
+
 def set_up_player():
     global player_group
     player_group.empty()
@@ -73,6 +82,8 @@ for row in range(3):
           invader_fleet.add(invader)
 
 respawn_timer = 0
+
+victory = False
 
 # game loop
 running = True
@@ -97,8 +108,27 @@ while running:
         life = pygame.transform.scale(life, (20, 20))
         screen.blit(life, (10 + i * 30, 10))
 
+    if victory:
+        victory_text()
+    
+    # same restart logic as for game over - should be reused instead of copied
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_r]:
+            # Reset game state
+            game_on = True
+            victory = False
+            # Reset player
+            set_up_player()
+            # Recreate alien fleet
+            invader_fleet.empty()
+            for row in range(3):
+                for col in range(8):
+                    pos = (col * 50 + 50, row * 50 + 40)
+                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+                    invader_fleet.add(invader)
+
     # game over screen and restart logic
-    if not game_on:
+    elif not game_on:
         game_over_text()
         restart_font = pygame.font.SysFont("arial", 32)
         restart_text = restart_font.render("Press R to restart", True, (255, 255, 255))
@@ -125,6 +155,11 @@ while running:
         # print("DEBUG: player_group.sprite exists?", player_group.sprite is not None)
         player_group.update()
         invader_fleet.update()
+
+        # victory screen
+        if len(invader_fleet) == 0:
+            victory = True
+            game_on = False
 
     # Add collision detection
         if player_group.sprite and hasattr(player_group.sprite, 'lasers'):
