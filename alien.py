@@ -15,7 +15,7 @@ class SpriteSheet:
 
 class AnimatedAlien(pygame.sprite.Sprite):
     def __init__(self, pos: Tuple[int, int], spritesheet, 
-                 frame_coords: List[Tuple[int, int]], sprite_size: Tuple[int, int]):
+                 frame_coords: List[Tuple[int, int]], sprite_size: Tuple[int, int], points: int):
         super().__init__()
         
         # Extract sprites from spritesheet
@@ -39,6 +39,9 @@ class AnimatedAlien(pygame.sprite.Sprite):
 
         # Give them lasers
         self.lasers = pygame.sprite.Group()
+
+        # how many points is this alien worth
+        self.points = points
         
     def animate(self, current_time: int):
         if current_time - self.animation_timer > self.ANIMATION_DELAY:

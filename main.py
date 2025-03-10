@@ -69,6 +69,11 @@ def set_up_player():
     player = Spaceship(windowSize[0], windowSize[1])
     player_group.add(player)
 
+    #player score
+    score_font = pygame.font.SysFont("arial", 15)
+    score_display = score_font.render(f"Score: {player.score}", True, (255, 255, 0))
+    screen.blit(score_display, (700, 10))
+
     if not player_group.sprite:
         print("ERROR: Player was not added to player_group!")
 
@@ -78,7 +83,7 @@ invader_fleet = AlienFleet()
 for row in range(3):
      for col in range(8):
           pos = (col * 50 + 50, row * 50 + 40)
-          invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+          invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), 10)
           invader_fleet.add(invader)
 
 respawn_timer = 0
@@ -124,7 +129,7 @@ while running:
             for row in range(3):
                 for col in range(8):
                     pos = (col * 50 + 50, row * 50 + 40)
-                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), 10)
                     invader_fleet.add(invader)
 
     # game over screen and restart logic
@@ -146,7 +151,7 @@ while running:
             for row in range(3):
                 for col in range(8):
                     pos = (col * 50 + 50, row * 50 + 40)
-                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70))
+                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), 10)
                     invader_fleet.add(invader)
             respawn_timer = 0
 
@@ -155,6 +160,12 @@ while running:
         # print("DEBUG: player_group.sprite exists?", player_group.sprite is not None)
         player_group.update()
         invader_fleet.update()
+
+        # display score
+        if player_group.sprite:
+            score_font = pygame.font.SysFont("arial", 15)
+            score_display = score_font.render(f"Score: {player_group.sprite.score}", True, (255, 255, 0))
+            screen.blit(score_display, (650, 20))
 
         # victory screen
         if len(invader_fleet) == 0:
@@ -166,6 +177,9 @@ while running:
             for laser in player_group.sprite.lasers:
                 aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)
                 if aliens_hit:
+                    # add the destroyed alien's points to the player's score
+                    for alien in aliens_hit:
+                        player_group.sprite.increment_score(alien.points)
                     laser.kill()
                     boom.play()
 

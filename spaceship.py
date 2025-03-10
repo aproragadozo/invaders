@@ -11,6 +11,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.speed = 6
         self.lasers = pygame.sprite.Group()
         self.lives = 3
+        self.score = 0
 
     def get_input(self):
         keys = pygame.key.get_pressed()
@@ -29,6 +30,9 @@ class Spaceship(pygame.sprite.Sprite):
     def lose_life(self):
         if self.lives > 0:
             self.lives -= 1
+    
+    def increment_score(self, points):
+        self.score += points
 
     def update(self):
         self.get_input()
