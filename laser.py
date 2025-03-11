@@ -9,6 +9,8 @@ class Laser(pygame.sprite.Sprite):
         self.speed = speed if not alien_firing else -speed
         self.screen_height = screen_height
         self.fire = True
+        # track the position where the laser was fired
+        self.x_position = position[0]
 
     def update(self):
         self.rect.y += self.speed

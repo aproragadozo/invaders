@@ -65,6 +65,18 @@ class AlienFleet(pygame.sprite.Group):
         self.speed = 1
         self.direction = 1
         self.drop_distance = 40
+
+    def find_aliens_near_player_shots(self, shot_positions, tolerance=50):
+        potential_shooters = []
+        
+        for alien in self.sprites():
+            for shot_x in shot_positions:
+                # If alien is within tolerance distance of a player shot
+                if abs(alien.rect.centerx - shot_x) < tolerance:
+                    potential_shooters.append(alien)
+                    break
+        
+        return potential_shooters
     
     def update(self):
         if not self.sprites():  # If no aliens left

@@ -47,6 +47,10 @@ boom = pygame.mixer.Sound("boom2.wav")
 # clock
 clock = pygame.time.Clock()
 
+# track player shot x-coords
+recent_player_shots = []
+SHOT_MEMORY = 3
+
 # game over screen
 font = pygame.font.SysFont("arial", 64)
 def game_over_text():
@@ -159,6 +163,14 @@ while running:
     if game_on:
         # print("DEBUG: player_group.sprite exists?", player_group.sprite is not None)
         player_group.update()
+        # aliens targeted shooting
+        if recent_player_shots and random.random() < 0.05:
+            shooters = invader_fleet.find_aliens_near_player_shots(recent_player_shots)
+            if shooters:
+                # Select one to shhot
+                shooter = random.choice(shooters)
+                shooter.shoot_at_random() 
+
         invader_fleet.update()
 
         # display score
@@ -175,6 +187,12 @@ while running:
     # Add collision detection
         if player_group.sprite and hasattr(player_group.sprite, 'lasers'):
             for laser in player_group.sprite.lasers:
+                # add the x position of the laser to the list of recent player shots
+                if laser.x_position not in recent_player_shots:
+                    recent_player_shots.append(laser.x_position)
+                    # keep only the last 3
+                    if len(recent_player_shots) > SHOT_MEMORY:
+                        recent_player_shots.pop(0)
                 aliens_hit = pygame.sprite.spritecollide(laser, invader_fleet, True)
                 if aliens_hit:
                     # add the destroyed alien's points to the player's score
