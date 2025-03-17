@@ -15,7 +15,7 @@ class SpriteSheet:
 
 class AnimatedAlien(pygame.sprite.Sprite):
     def __init__(self, pos: Tuple[int, int], spritesheet, 
-                 frame_coords: List[Tuple[int, int]], sprite_size: Tuple[int, int], points: int):
+                 frame_coords: List[Tuple[int, int]], sprite_size: Tuple[int, int], points: int, color_tint=None):
         super().__init__()
         
         # Extract sprites from spritesheet
@@ -42,6 +42,15 @@ class AnimatedAlien(pygame.sprite.Sprite):
 
         # how many points is this alien worth
         self.points = points
+
+        if color_tint:
+            self.tint_sprite(color_tint)
+
+    def tint_sprite(self, color):
+        """ Apply a color tint to the sprite. """
+        tint_surface = pygame.Surface(self.image.get_size(), pygame.SRCALPHA)
+        tint_surface.fill(color)
+        self.image.blit(tint_surface, (0, 0), special_flags=pygame.BLEND_MULT)
         
     def animate(self, current_time: int):
         if current_time - self.animation_timer > self.ANIMATION_DELAY:

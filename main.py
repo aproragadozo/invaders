@@ -51,6 +51,9 @@ clock = pygame.time.Clock()
 recent_player_shots = []
 SHOT_MEMORY = 3
 
+# alien color options
+row_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+
 # game over screen
 font = pygame.font.SysFont("arial", 64)
 def game_over_text():
@@ -88,7 +91,8 @@ for row in range(3):
      points = 40 - (row + 1) * 10
      for col in range(8):
           pos = (col * 50 + 50, row * 50 + 40)
-          invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points)
+          alien_color = row_colors[row]
+          invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points, alien_color)
           invader_fleet.add(invader)
 
 respawn_timer = 0
