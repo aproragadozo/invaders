@@ -140,7 +140,8 @@ while running:
                 points = 40 - (row + 1) * 10
                 for col in range(8):
                     pos = (col * 50 + 50, row * 50 + 40)
-                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points)
+                    alien_color = row_colors[row]
+                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points, alien_color)
                     invader_fleet.add(invader)
 
     # game over screen and restart logic
@@ -163,7 +164,8 @@ while running:
                 points = 40 - (row + 1) * 10
                 for col in range(8):
                     pos = (col * 50 + 50, row * 50 + 40)
-                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points)
+                    alien_color = row_colors[row]
+                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points, alien_color)
                     invader_fleet.add(invader)
             respawn_timer = 0
 
