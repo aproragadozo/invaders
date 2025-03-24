@@ -88,12 +88,15 @@ set_up_player()
 
 invader_fleet = AlienFleet()
 for row in range(3):
-     points = 40 - (row + 1) * 10
-     for col in range(8):
-          pos = (col * 50 + 50, row * 50 + 40)
-          alien_color = row_colors[row]
-          invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points, alien_color)
-          invader_fleet.add(invader)
+    points = 40 - (row + 1) * 10
+    for col in range(8):
+        pos = (col * 50 + 50, row * 50 + 40)
+        alien_color = row_colors[row]
+        if row == 2:
+            invader = AnimatedAlien(pos, spritesheet, [(16, 238), (129, 238)], (95, 69), points, alien_color)
+        else:
+            invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points, alien_color)
+        invader_fleet.add(invader)
 
 respawn_timer = 0
 
@@ -141,7 +144,10 @@ while running:
                 for col in range(8):
                     pos = (col * 50 + 50, row * 50 + 40)
                     alien_color = row_colors[row]
-                    invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points, alien_color)
+                    if row == 2:
+                        invader = AnimatedAlien(pos, spritesheet, [(16, 238), (129, 238)], (95, 69), points, alien_color)
+                    else:
+                        invader = AnimatedAlien(pos, spritesheet, [(25, 132), (130, 132)], (90, 70), points, alien_color)
                     invader_fleet.add(invader)
 
     # game over screen and restart logic

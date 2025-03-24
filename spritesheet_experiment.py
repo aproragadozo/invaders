@@ -7,7 +7,7 @@ spritesheet = pygame.image.load('graphics/aliensprite.png').convert_alpha()
 
 # sprite_one = spritesheet.subsurface((25, 132, 90, 70))
 sprite_two = spritesheet.subsurface((13, 238, 95, 69))
-sprite_three = spritesheet.subsurface((129, 238, 95, 69))
+sprite_three = spritesheet.subsurface((16, 238, 95, 69))
 # bullet = spritesheet.subsurface((475, 890, 25, 50))
 
 run = True
